@@ -1,6 +1,6 @@
 /* Rocket's Starship Garage — static asset cache.
    Game saves stay in the page's localStorage and are never touched here. */
-const CACHE = "rockets-starship-garage-v5";
+const CACHE = "rockets-starship-garage-v6";
 
 const PRECACHE = [
   "index.html",
