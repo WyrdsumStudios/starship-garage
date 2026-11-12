@@ -1,6 +1,6 @@
 /* Rocket's Starship Garage — static asset cache.
    Game saves stay in the page's localStorage and are never touched here. */
-const CACHE = "rockets-starship-garage-v1";
+const CACHE = "rockets-starship-garage-v2";
 
 const PRECACHE = [
   "index.html",
@@ -17,7 +17,14 @@ self.addEventListener("install", (event) => {
     (async () => {
       const cache = await caches.open(CACHE);
       const scope = self.registration.scope;
-      await cache.addAll(PRECACHE.map((path) => new URL(path, scope).href));
+      await Promise.all(
+        PRECACHE.map(async (path) => {
+          const url = new URL(path, scope).href;
+          const response = await fetch(url, { cache: "reload" });
+          if (!response.ok) throw new Error("precache failed for " + path);
+          await cache.put(url, response);
+        })
+      );
       const index = await cache.match(new URL("index.html", scope).href);
       if (index) {
         await cache.put(new URL("./", scope).href, index.clone());
